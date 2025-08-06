@@ -94,18 +94,15 @@ class Funcionario(Pessoa,Logavel,IdentificavelMixin,AuditavelMixin):
         return self.nome
     
     def logar_entrada(self):
-        return f"Entrada confirmada"
+        print(date.today())
+
+    def log_evento(self, evento: str):
+        return f"Você está participando do {evento}"
+
 # -------------------------------------------------
 # 7) Palco (objeto de composição)                 🡇
 # -------------------------------------------------
-class Palco:
-    
-        def __init__(self, nome: str, capacidade: int):
-            self.nome=nome
-            self.capacidade=capacidade
 
-        def resumo(self): 
-            return f"Palco {self.nome} - cap. {self.capacidade} pessoas"
 
 # -------------------------------------------------
 # 8) Festival (composição com Palco)              🡇
@@ -120,26 +117,35 @@ class Palco:
 #   • listar_equipe()
 #   • listar_ingressos()
 class Festival:
-    def __init__(self,nome, local,palco,*valores): 
+    def __init__(self,nome, local,nomep,capacidade,*valores): 
         self.nome=nome
         self.data=date.today()+timedelta(days=15)
         self.local=local
-        self.palco= palco
+        self.palco= self.Palco(nomep,capacidade)
         self.clientes=[]
         self.equipe=[] 
         self.ingressos=[*valores]
 
+    class Palco:
     
+        def __init__(self, nome: str, capacidade: int):
+            self.nome=nome
+            self.capacidade=capacidade
+
+        def resumo(self): 
+            return f"Palco {self.nome} - cap. {self.capacidade} pessoas"
     
     def vender_ingresso(self,cliente, ingresso):
         for i in self.ingressos:
-            if i.valor == ingresso.valor and i.tipo==ingresso.tipo and i.codigo==ingresso.codigo:
+            if i.valor == ingresso.valor and i.tipo==ingresso.tipo and i.codigo==ingresso.codigo and self.palco.capacidade>=1:
                 self.clientes.append(cliente)
                 cliente.comprar_ingresso(i)
                 self.ingressos.remove(i)
                 self.palco.capacidade-=1
                 break
-        print("ingresso não econtrado")
+            else:
+                print("Não é possivel realizar a venda")
+                return
     
     def adicionar_funcionario(self,func):
         self.equipe.append(func)
@@ -169,11 +175,11 @@ class EmpresaEventos:
     
 
     @property
-    def nome_get(self):
+    def nome(self):
         return self.nome
     
-    #@nome.set
-    def nome_set(self, novo_nome: str):
+    @nome.setter
+    def nome(self, novo_nome: str):
         return len(novo_nome.strip())>= 3
     
     def adicionar_festival(self, festival):
@@ -233,13 +239,11 @@ if __name__ == "__main__":
       • Venda ingressos, liste participantes, audite festivais.
       • Mostre saídas no console para validar implementações.
     """
-    p1=Palco("zora",1000)
-    p2=Palco("mega",1200)
-    p3=Palco("Nat",500)
+    
 
-    f1=Festival("masc","Los Angeles",p1)
-    f2=Festival("dell", "París", p2)
-    f3=Festival("mill","Pau dos Ferros",p1)
+    f1=Festival("masc","Los Angeles","zora", 1000)
+    f2=Festival("dell", "París", "bita",1200)
+    f3=Festival("mill","Pau dos Ferros","luL",500)
     
 
     emp= EmpresaEventos("multshow")
