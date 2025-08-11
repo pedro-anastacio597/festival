@@ -100,7 +100,7 @@ class Funcionario(Pessoa,Logavel,IdentificavelMixin,AuditavelMixin):
         print(f"o Funcionario {self._nome} entrou em {date.today()}")
 
     def log_evento(self, evento: str):
-        return f"Você está participando do {evento}"
+         print(f"[LOG] <{evento}>")
 
 # -------------------------------------------------
 # 7) Palco (objeto de composição)                 🡇
@@ -224,23 +224,23 @@ class EmpresaEventos:
 class Auditor(IdentificavelMixin,Logavel):
     def __init__(self,nome):
         super().__init__()
-        self.nome=nome
+        self._nome=nome
     
     def logar_entrada(self):
-        return f"entrada comfirmada"
-    
+        print(f"Nome: {self._nome} - Entrada: {date.today()}")
+
     def auditar_festival(self,fest):
-        if len(fest.clientes) <= len(fest.palco.capacidade):
-            func=len(fest.equipe)
-            if (len(fest.palco.capacidade) - len(fest.clientes)) > 0:
-                return f"O palco {fest.palco} possui {len(fest.palco.capacidade) - len(fest.clientes)} assentoa disponivéis, contando com {func} funcioanrios disponiveis no festival {fest.nome}"
-            else:
-                return  f"O palco {fest.palco} não possui assentos disponivéis, contando com {func} funcioanrios disponivéis no festival {fest.nome}"
+        func=len(fest.equipe)
+        if (fest.palco.capacidade - len(fest.clientes)) > 0:
+            if func > 0:
+                return f"O palco possuí {fest.palco.capacidade - len(fest.clientes)} disponiveis, contando com {func} funcionarios"
         else:
-            return f"O palco está excedendo o limite, por favor reitirar {len(fest.clientes) - len(fest.palco.capacidade)} espectadores!"
-        
+            return  f"O palco {fest.palco.nome} está lotado"
+      
     def __str__(self):
-        return f"Auditor <{self.nome}> (ID: {self.__id})"
+        return f"Auditor <{self._nome}> (ID: {self.get_id()})"
+    
+    
 
 # -------------------------------------------------
 # 11) Bloco de teste                              🡇
@@ -304,5 +304,6 @@ if __name__ == "__main__":
     print(emp.buscar_festival("dell"))
     emp.listar_festivais()
 
-    Au.auditar_festival(f2)
+    print(Au.auditar_festival(f1))
+    print(Au)
 
