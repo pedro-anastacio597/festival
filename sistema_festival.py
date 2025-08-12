@@ -4,14 +4,12 @@ from datetime import date,timedelta
 
 
 class Logavel(ABC):
-    # Qualquer classe logável DEVE implementar logar_entrada().
-    """"terminar"""
     @abstractmethod
     def logar_entrada(self):
         pass
 
 class IdentificavelMixin:
-    # Gera um ID único; combine‑o com outras classes."
+    
     
     def __init__(self):
         self.__id=uuid.uuid4()
@@ -19,16 +17,12 @@ class IdentificavelMixin:
     def get_id(self):
         return self.__id
         
-
 class AuditavelMixin:
-    # Fornece logs simples ao console
-    ''''termianr'''
+   
     def log_evento(self, evento: str):
-        # TODO: imprimir no formato  [LOG] <evento>
-        pass
+        print(f"[LOG] <{evento}>")
 
 class Pessoa:
-    #Classe base para pessoas do sistema.
     def __init__(self, nome: str, cpf: str):
         self._nome=nome
         self._cpf=cpf
@@ -44,7 +38,7 @@ class Pessoa:
 class Ingresso:
     def __init__(self, codigo: str, tipo: str, preco: float):
         self.codigo = codigo
-        self.tipo = tipo  # ex.: 'Pista', 'VIP', 'Backstage'
+        self.tipo = tipo  
         self.preco = preco
 
     def __str__(self):
@@ -68,19 +62,6 @@ class Cliente(Pessoa):
     
     def nome(self):
         return self.nome
-    
-
-        
-
-# -------------------------------------------------
-# 6) Funcionario (herança múltipla + mixins)      🡇
-# -------------------------------------------------
-# TODO: Implementar a classe Funcionario
-# - Herda de Pessoa, IdentificavelMixin e Logavel (pode usar AuditavelMixin)
-# - Atributos: cargo, registro
-# - Métodos:
-#   • exibir_dados()    → imprime nome, cargo, registro e ID
-#   • logar_entrada()   → registra no log
 
 class Funcionario(Pessoa,Logavel,IdentificavelMixin,AuditavelMixin): 
     """Terminar"""
@@ -99,26 +80,6 @@ class Funcionario(Pessoa,Logavel,IdentificavelMixin,AuditavelMixin):
         self._registro.append(date.today().strftime("%d/%m"))
         print(f"o Funcionario {self._nome} entrou em {date.today()}")
 
-    def log_evento(self, evento: str):
-         print(f"[LOG] <{evento}>")
-
-# -------------------------------------------------
-# 7) Palco (objeto de composição)                 🡇
-# -------------------------------------------------
-
-
-# -------------------------------------------------
-# 8) Festival (composição com Palco)              🡇
-# -------------------------------------------------
-# TODO: Implementar a classe Festival
-# - Atributos: nome, data, local, palco
-# - Listas: clientes, equipe, ingressos
-# - Métodos:
-#   • vender_ingresso(cliente, ingresso)  (checar duplicidade & capacidade)
-#   • adicionar_funcionario(func)
-#   • listar_clientes()
-#   • listar_equipe()
-#   • listar_ingressos()
 class Festival:
     def __init__(self,nome, local,nomep,capacidade,*valores): 
         self.nome=nome
@@ -174,9 +135,7 @@ class Festival:
         for i in self.ingressos:
             print(f"{i}")
 
-# -------------------------------------------------
-# 9) EmpresaEventos                               🡇
-# -------------------------------------------------
+
 class EmpresaEventos:
     """Agrupa seus festivais (has‑a)."""
     def __init__(self, nome):
@@ -207,19 +166,6 @@ class EmpresaEventos:
         for f in self.festivais:
             print(f"{f.nome}:{len(f.equipe)}funcionarios, possui {len(f.clientes)} clientes, contado com {len(f.ingressos)} para {f.data.strftime('%d/%m')}")
 
-# -------------------------------------------------
-# 10) Auditor (Identificável + Logável)           🡇
-# -------------------------------------------------
-# TODO: Implementar a classe Auditor
-# - Herda de IdentificavelMixin e Logavel
-# - Atributo: nome
-# - Métodos:
-#   • logar_entrada() → registra entrada no sistema
-#   • auditar_festival(fest) → verifica:
-#         ▸ Nº de clientes ≤ capacidade do palco
-#         ▸ existe ao menos 1 funcionário
-#     imprime relatório de conformidade
-#   • __str__() → "Auditor <nome> (ID: ...)"
 
 class Auditor(IdentificavelMixin,Logavel):
     def __init__(self,nome):
@@ -241,10 +187,6 @@ class Auditor(IdentificavelMixin,Logavel):
         return f"Auditor <{self._nome}> (ID: {self.get_id()})"
     
     
-
-# -------------------------------------------------
-# 11) Bloco de teste                              🡇
-# -------------------------------------------------
 if __name__ == "__main__":
     """
     TODO:
@@ -261,18 +203,18 @@ if __name__ == "__main__":
     fu3=Funcionario("Atendente","jalison","3234536457457")
 
     i1=Ingresso("233464574","VIP",15.5)
-    i2=Ingresso("1456586","Comum",5.0)
-    i3=Ingresso("14788097","Plus",10.0)
+    i2=Ingresso("1456586","Pista",5.0)
+    i3=Ingresso("14788097","BackStage",10.0)
     i4=Ingresso("5489795","Vip",15.5)
-    i5=Ingresso("1249878","Comum",5.0)
-    i6=Ingresso("1453535","Comum",5.0)
-    i7=Ingresso("5746747","Comum",5.0)
+    i5=Ingresso("1249878","BackStage",5.0)
+    i6=Ingresso("1453535","Pista",5.0)
+    i7=Ingresso("5746747","Pista",5.0)
 
-    ing=Ingresso("5746747","Comum",5.0)
-    iing=Ingresso("1453535","Comum",5.0)
-    io=Ingresso("1249878","Comum",5.0)
-    igres=Ingresso("1456586","Comum",5.0)
-    soo=Ingresso("14788097","Plus",10.0)
+    ing=Ingresso("5746747","Pista",5.0)
+    iing=Ingresso("1453535","Pista",5.0)
+    io=Ingresso("1249878","BackStage",5.0)
+    igres=Ingresso("1456586","Pista",5.0)
+    soo=Ingresso("14788097","BackStage",10.0)
 
     f1=Festival("masc","Los Angeles","zora", 1000,i1,i2,i3,i4,i5,i6,i7)
     f2=Festival("dell", "París", "bita",1200,i1,i2,i3,i4,i5,i6,i7)
