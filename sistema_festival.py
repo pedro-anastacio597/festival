@@ -141,18 +141,20 @@ class EmpresaEventos:
     def __init__(self, nome):
         self.festivais=[]
         if len(nome)>=3:    
-            self.nome=nome
+            self._nome=nome
         else:
              raise ValueError ("Nome invalido")
     
 
     @property
     def nome(self):
-        return self.nome
+        return self._nome
     
     @nome.setter
     def nome(self, novo_nome: str):
-        return len(novo_nome)>= 3
+        if len(novo_nome)>= 3:
+            self._nome=novo_nome
+        
     
     def adicionar_festival(self, festival):
         self.festivais.append(festival)
@@ -248,4 +250,5 @@ if __name__ == "__main__":
 
     print(Au.auditar_festival(f1))
     print(Au)
+
 
